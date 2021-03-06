@@ -61,10 +61,9 @@ module.exports = (app) => {
   // Update
   app.put("/collections/:id", (req, res) => {
     if (req.user) {
-      collection
-        .findByIdAndUpdate(req.params.id, {
-          $set: { name: req.body.name },
-        })
+      Collection.findByIdAndUpdate(req.params.id, {
+        $set: { name: req.body.name },
+      })
         .then(() => {
           return Collection.findOne({ _id: req.params.id });
         })
@@ -82,8 +81,7 @@ module.exports = (app) => {
   // Delete
   app.post("/collections/delete/:id", (req, res) => {
     if (req.user) {
-      collection
-        .findByIdAndDelete(req.params.id)
+      Collection.findByIdAndDelete(req.params.id)
         .then((collection) => {
           if (collection === null) {
             return res.json({ message: "Collection does not exist." });

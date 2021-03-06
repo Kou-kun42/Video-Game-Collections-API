@@ -10,9 +10,8 @@ module.exports = (app) => {
 
       game
         .save()
-        .then((user) => {
-          // REDIRECT TO THE NEW Game
-          res.redirect(`/games/${game._id}`);
+        .then(() => {
+          return res.send(game);
         })
         .catch((err) => {
           console.log(err.message);
@@ -24,28 +23,30 @@ module.exports = (app) => {
 
   // Read
   app.get("/games/:id", function (req, res) {
-    Game.findById(req.params.id)
-      .lean()
-      .then((game) => {
-        res.redirect("/");
-        return res.json({ game });
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
+    if (req.user) {
+      Game.findById(req.params.id)
+        .then((game) => {
+          return res.send(game);
+        })
+        .catch((err) => {
+          console.log(err.message);
+        });
+    } else {
+      return res.status(401); // UNAUTHORIZED
+    }
   });
 
   // Update
-  app.post("/collections/:id", (req, res) => {
+  app.put("/games/:id", (req, res) => {
     if (req.user) {
-      collection
-        .findByIdAndUpdate(req.params.id, req.body)
+      Game.findByIdAndUpdate(req.params.id, {
+        $set: { title: req.body.name, platform: req.body.platform },
+      })
         .then(() => {
-          return Collection.findOne({ _id: req.params.id });
+          return Game.findOne({ _id: req.params.id });
         })
-        .then((collection) => {
-          res.redirect("/");
-          return res.json({ collection });
+        .then((game) => {
+          return res.json({ game });
         })
         .catch((err) => {
           console.log(err.message);
@@ -55,24 +56,28 @@ module.exports = (app) => {
     }
   });
 
-  // Delete
-  app.post("/collections/delete/:id", (req, res) => {
-    if (req.user) {
-      collection
-        .findByIdAndDelete(req.params.id)
-        .then((collection) => {
-          if (collection === null) {
-            return res.json({ message: "Collection does not exist." });
-          } else {
-            res.redirect("/");
-            return res.json({ message: "Collection deleted successfully." });
-          }
-        })
-        .catch((err) => {
-          console.log(err.message);
-        });
-    } else {
-      return res.status(401); // UNAUTHORIZED
-    }
-  });
+  //   // Delete
+  //   app.post("/games/delete/:collectionId/:gameId", (req, res) => {
+  //     if (req.user) {
+  //         Game
+  //           .findByIdAndDelete(req.params.gameid)
+  //           .then((game) => {
+  //             if (game === null) {
+  //               return res.json({ message: "Game does not exist." });
+  //             }
+  //             return User.deleteOne({ collecions: req.params.id });
+  //           })
+  //           .then(() =>
+  //             res.json({
+  //               message: "Collection has been successfully deleted.",
+  //               _id: req.params.id,
+  //             })
+  //           )
+  //           .catch((err) => {
+  //             console.log(err.message);
+  //           });
+  //       } else {
+  //         return res.status(401); // UNAUTHORIZED
+  //       }
+  //   });
 };
