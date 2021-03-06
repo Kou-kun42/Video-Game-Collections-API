@@ -53,7 +53,7 @@ module.exports = (app) => {
   app.put("/games/:id", (req, res) => {
     if (req.user) {
       Game.findByIdAndUpdate(req.params.id, {
-        $set: { title: req.body.name, platform: req.body.platform },
+        $set: { title: req.body.title, platform: req.body.platform },
       })
         .then(() => {
           return Game.findOne({ _id: req.params.id });
