@@ -1,4 +1,5 @@
 const Collection = require("../models/collection");
+const Game = require("../models/game");
 const User = require("../models/user");
 
 module.exports = (app) => {
@@ -94,6 +95,58 @@ module.exports = (app) => {
             _id: req.params.id,
           })
         )
+        .catch((err) => {
+          console.log(err.message);
+        });
+    } else {
+      return res.status(401); // UNAUTHORIZED
+    }
+  });
+
+  // Add game to collection
+  app.post("/collections/:collectionId/add/:gameId", (req, res) => {
+    if (req.user) {
+      Collection.findById(req.params.collectionId)
+        .then((collection) => {
+          if (collection === null) {
+            return res.json({ message: "Collection does not exist." });
+          }
+          const game = Game.findById(req.params.gameId);
+          if (game === null) {
+            return res.json({ message: "Game does not exist." });
+          }
+          collection.games.unshift(game);
+          return collection.save();
+        })
+        .then(() => {
+          return res.send(collection);
+        })
+        .catch((err) => {
+          console.log(err.message);
+        });
+    } else {
+      return res.status(401); // UNAUTHORIZED
+    }
+  });
+
+  // Remove game from collection
+  app.post("/collections/:collectionId/remove/:gameId", (req, res) => {
+    if (req.user) {
+      Collection.findById(req.params.collectionId)
+        .then((collection) => {
+          if (collection === null) {
+            return res.json({ message: "Collection does not exist." });
+          }
+          const game = Game.findById(req.params.gameId);
+          if (game === null) {
+            return res.json({ message: "Game does not exist." });
+          }
+          collection.games.deleteOne(game);
+          return collection.save();
+        })
+        .then(() => {
+          return res.send(collection);
+        })
         .catch((err) => {
           console.log(err.message);
         });

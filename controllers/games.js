@@ -55,29 +55,4 @@ module.exports = (app) => {
       return res.status(401); // UNAUTHORIZED
     }
   });
-
-  //   // Delete
-  //   app.post("/games/delete/:collectionId/:gameId", (req, res) => {
-  //     if (req.user) {
-  //         Game
-  //           .findByIdAndDelete(req.params.gameid)
-  //           .then((game) => {
-  //             if (game === null) {
-  //               return res.json({ message: "Game does not exist." });
-  //             }
-  //             return User.deleteOne({ collecions: req.params.id });
-  //           })
-  //           .then(() =>
-  //             res.json({
-  //               message: "Collection has been successfully deleted.",
-  //               _id: req.params.id,
-  //             })
-  //           )
-  //           .catch((err) => {
-  //             console.log(err.message);
-  //           });
-  //       } else {
-  //         return res.status(401); // UNAUTHORIZED
-  //       }
-  //   });
 };
