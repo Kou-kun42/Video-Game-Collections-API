@@ -3,6 +3,7 @@
 Keep track of and manage your games!
 
 [Documentation Site](https://kou-kun42.github.io/Video-Game-Collections-API/)
+
 [Public Deployment](https://video-game-collections-api.herokuapp.com/)
 
 ## Overview
