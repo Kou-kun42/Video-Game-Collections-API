@@ -1,6 +1,4 @@
-const { Collection } = require("mongoose");
-const Post = require("../models/collection");
-const Game = require("../models/game");
+const Collection = require("../models/collection");
 const User = require("../models/user");
 
 module.exports = (app) => {
@@ -18,9 +16,10 @@ module.exports = (app) => {
         })
         .then((user) => {
           user.collections.unshift(collection);
-          user.save();
-          // REDIRECT TO THE NEW POST
-          res.redirect(`/collections/${collection._id}`);
+          return user.save();
+        })
+        .then(() => {
+          return res.send(collection);
         })
         .catch((err) => {
           console.log(err.message);
@@ -32,27 +31,27 @@ module.exports = (app) => {
 
   // INDEX
   app.get("/", (req, res) => {
-    var currentUser = req.user;
-    console.log(req.cookies);
-    Collection.find({})
-      .lean()
-      .populate("author")
-      .then((collections) => {
-        res.render("collections-index", { collections, currentUser });
-      })
-      .catch((err) => {
-        console.log(err.message);
+    if (req.user) {
+      Collection.find({ author: req.user })
+        .then((collections) => {
+          res.json({ collections });
+        })
+        .catch((err) => {
+          console.log(err.message);
+        });
+    } else {
+      res.json({
+        message: "Please sign up or log in to view your collections.",
       });
+    }
   });
 
   // Read
   app.get("/collections/:id", function (req, res) {
     var currentUser = req.user;
-    Post.findById(req.params.id)
-      .populate("games")
-      .lean()
+    Collection.findByOne({ _id: req.params.id })
       .then((collection) => {
-        res.render("collection-show", { collection, currentUser });
+        res.send(collection);
       })
       .catch((err) => {
         console.log(err.message);
@@ -60,15 +59,16 @@ module.exports = (app) => {
   });
 
   // Update
-  app.post("/collections/:id", (req, res) => {
+  app.put("/collections/:id", (req, res) => {
     if (req.user) {
       collection
-        .findByIdAndUpdate(req.params.id, req.body)
+        .findByIdAndUpdate(req.params.id, {
+          $set: { name: req.body.name },
+        })
         .then(() => {
           return Collection.findOne({ _id: req.params.id });
         })
         .then((collection) => {
-          res.redirect("/");
           return res.json({ collection });
         })
         .catch((err) => {
@@ -87,11 +87,15 @@ module.exports = (app) => {
         .then((collection) => {
           if (collection === null) {
             return res.json({ message: "Collection does not exist." });
-          } else {
-            res.redirect("/");
-            return res.json({ message: "Collection deleted successfully." });
           }
+          return User.deleteOne({ collecions: req.params.id });
         })
+        .then(() =>
+          res.json({
+            message: "Collection has been successfully deleted.",
+            _id: req.params.id,
+          })
+        )
         .catch((err) => {
           console.log(err.message);
         });
