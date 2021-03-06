@@ -2,6 +2,8 @@
 
 Keep track of and manage your games!
 
+[Documentation Site](https://kou-kun42.github.io/Video-Game-Collections-API/)
+
 ## Overview
 
 In this API, you can create games and collections. You can create as many games and collections as you want. All games are shared and available to all users, however each user can only view their own collections. As someone who loves collecting games, I find myself needing an easy way to keep track of games I have or games I want to buy. Another great use is to use it as a backlog manager where you can have lists of games you want to one day play, or have a list of games you've already played. This API is simple but can be applied to many uses.
