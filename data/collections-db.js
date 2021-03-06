@@ -2,10 +2,10 @@
 const mongoose = require("mongoose");
 assert = require("assert");
 
-const url = "mongodb://localhost/game-collections";
+const mongoUri = process.env.MONGODB_URI || "collections-api";
 mongoose.Promise = global.Promise;
 mongoose.connect(
-  url,
+  mongoUri,
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,

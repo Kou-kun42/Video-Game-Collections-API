@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("dotenv/config");
 
 const express = require("express");
 var cookieParser = require("cookie-parser");
@@ -36,11 +36,11 @@ app.use(checkAuth);
 
 // Controllers required here, after all middleware is initialized.
 require("./controllers/auth.js")(app);
-require("./controllers/games.js")(app);
 require("./controllers/collections.js")(app);
+require("./controllers/games.js")(app);
 
-app.listen(3000, () => {
-  console.log("API listening on port http://localhost:3000!");
+app.listen(process.env.PORT, () => {
+  console.log(`Collections API listening on port ${process.env.PORT}!`);
 });
 
 module.exports = app;

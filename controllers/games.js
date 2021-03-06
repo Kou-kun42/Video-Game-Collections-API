@@ -1,6 +1,4 @@
-const Post = require("../models/collection");
 const Game = require("../models/game");
-const User = require("../models/user");
 
 module.exports = (app) => {
   // Create new game
@@ -22,11 +20,26 @@ module.exports = (app) => {
   });
 
   // Read
-  app.get("/games/:id", function (req, res) {
+  app.get("/games/:id", (req, res) => {
     if (req.user) {
       Game.findById(req.params.id)
         .then((game) => {
           return res.send(game);
+        })
+        .catch((err) => {
+          console.log(err.message);
+        });
+    } else {
+      return res.status(401); // UNAUTHORIZED
+    }
+  });
+
+  // Display all games
+  app.get("/games", (req, res) => {
+    if (req.user) {
+      Game.find({})
+        .then((games) => {
+          return res.json({ games });
         })
         .catch((err) => {
           console.log(err.message);

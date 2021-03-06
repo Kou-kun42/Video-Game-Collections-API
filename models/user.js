@@ -4,10 +4,8 @@ const Schema = mongoose.Schema;
 
 const UserSchema = new Schema(
   {
-    createdAt: { type: Date },
-    updatedAt: { type: Date },
-    password: { type: String, select: false },
     username: { type: String, required: true },
+    password: { type: String, select: false },
     collections: [{ type: Schema.Types.ObjectId, ref: "Collection" }],
   },
   { timestamps: { createdAt: "created_at" } }

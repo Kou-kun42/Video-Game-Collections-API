@@ -12,7 +12,7 @@ module.exports = (app) => {
 
       collection
         .save()
-        .then((collection) => {
+        .then(() => {
           return User.findById(req.user._id);
         })
         .then((user) => {
@@ -104,22 +104,25 @@ module.exports = (app) => {
   });
 
   // Add game to collection
-  app.post("/collections/:collectionId/add/:gameId", (req, res) => {
+  app.post("/collections/:collectionId/add/", (req, res) => {
     if (req.user) {
       Collection.findById(req.params.collectionId)
         .then((collection) => {
           if (collection === null) {
             return res.json({ message: "Collection does not exist." });
+          } else {
+            Game.findById(req.body.gameId)
+              .then((game) => {
+                if (game === null) {
+                  return res.json({ message: "Game does not exist." });
+                } else {
+                  return collection.games.unshift(game);
+                }
+              })
+              .then(() => {
+                return res.send(collection);
+              });
           }
-          const game = Game.findById(req.params.gameId);
-          if (game === null) {
-            return res.json({ message: "Game does not exist." });
-          }
-          collection.games.unshift(game);
-          return collection.save();
-        })
-        .then(() => {
-          return res.send(collection);
         })
         .catch((err) => {
           console.log(err.message);
@@ -130,22 +133,25 @@ module.exports = (app) => {
   });
 
   // Remove game from collection
-  app.post("/collections/:collectionId/remove/:gameId", (req, res) => {
+  app.post("/collections/:collectionId/remove/", (req, res) => {
     if (req.user) {
       Collection.findById(req.params.collectionId)
         .then((collection) => {
           if (collection === null) {
             return res.json({ message: "Collection does not exist." });
+          } else {
+            Game.findById(req.body.gameId)
+              .then((game) => {
+                if (game === null) {
+                  return res.json({ message: "Game does not exist." });
+                } else {
+                  return Collection.deleteOne({ games: game });
+                }
+              })
+              .then(() => {
+                return res.send(collection);
+              });
           }
-          const game = Game.findById(req.params.gameId);
-          if (game === null) {
-            return res.json({ message: "Game does not exist." });
-          }
-          collection.games.deleteOne(game);
-          return collection.save();
-        })
-        .then(() => {
-          return res.send(collection);
         })
         .catch((err) => {
           console.log(err.message);
