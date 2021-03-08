@@ -121,7 +121,7 @@ module.exports = (app) => {
                   return res.json({ message: "Game does not exist." });
                 } else {
                   collection.games.unshift(game);
-                  return collections.save();
+                  return collection.save();
                 }
               })
               .then(() => {
@@ -150,8 +150,7 @@ module.exports = (app) => {
                 if (game === null) {
                   return res.json({ message: "Game does not exist." });
                 } else {
-                  Collection.deleteOne({ games: game });
-                  return collections.save();
+                  return Collection.deleteOne({ games: game });
                 }
               })
               .then(() => {
