@@ -53,7 +53,7 @@ module.exports = (app) => {
     if (req.user) {
       Collection.findById(req.params.id)
         .then((collection) => {
-          res.send(collection);
+          res.send(collection.games);
         })
         .catch((err) => {
           console.log(err.message);
