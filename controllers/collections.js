@@ -1,3 +1,4 @@
+const { collections } = require("../data/collections-db");
 const Collection = require("../models/collection");
 const Game = require("../models/game");
 const User = require("../models/user");
@@ -119,7 +120,8 @@ module.exports = (app) => {
                 if (game === null) {
                   return res.json({ message: "Game does not exist." });
                 } else {
-                  return collection.games.unshift(game);
+                  collection.games.unshift(game);
+                  return collections.save();
                 }
               })
               .then(() => {
@@ -148,7 +150,8 @@ module.exports = (app) => {
                 if (game === null) {
                   return res.json({ message: "Game does not exist." });
                 } else {
-                  return Collection.deleteOne({ games: game });
+                  Collection.deleteOne({ games: game });
+                  return collections.save();
                 }
               })
               .then(() => {
