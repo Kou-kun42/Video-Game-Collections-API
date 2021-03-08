@@ -49,14 +49,17 @@ module.exports = (app) => {
 
   // Read
   app.get("/collections/:id", function (req, res) {
-    var currentUser = req.user;
-    Collection.findByOne({ _id: req.params.id })
-      .then((collection) => {
-        res.send(collection);
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
+    if (req.user) {
+      Collection.findById(req.params.id)
+        .then((collection) => {
+          res.send(collection);
+        })
+        .catch((err) => {
+          console.log(err.message);
+        });
+    } else {
+      return res.status(401); // UNAUTHORIZED
+    }
   });
 
   // Update
